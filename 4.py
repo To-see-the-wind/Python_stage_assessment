@@ -3,8 +3,8 @@ import pandas as pd
 df=pd.read_csv('train_u6lujuX_CVtuZ9i.csv')
 print(df.info())#主要问题：多列有数据缺失
 
-print(df.Credit_History.value_counts())#发现绝大多数no，因此统一fillna写no
-df.Self_Employed=df.Self_Employed.fillna('no')
+print(df.Self_Employed.value_counts())#发现绝大多数no，因此统一fillna写no
+df.Self_Employed=df.Self_Employed.fillna('No')
 print(df.LoanAmount.value_counts())#发现贷款金额差异较大，参差不齐，并且可能对结果影响较大，因此全部删除
 df=df.dropna(subset=['LoanAmount'])
 print(df.Credit_History.value_counts())#信用达标对结果影响较大，但是缺失数据较多，因此填写unknown
