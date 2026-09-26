@@ -1,11 +1,14 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+plt.rcParams['font.sans-serif'] = ['SimHei']
+plt.rcParams['axes.unicode_minus'] = False
 
 df=pd.read_csv('train_u6lujuX_CVtuZ9i.csv')
 print(df.info())#主要问题：多列有数据缺失
 
 print(df.Self_Employed.value_counts())#发现绝大多数no，因此统一fillna写no
 df.Self_Employed=df.Self_Employed.fillna('No')
-print(df.LoanAmount.value_counts())#发现贷款金额差异较大，参差不齐，并且可能对结果影响较大，因此全部删除
+print(df.LoanAmount.value_counts())#发现贷款金额对结果影响较大，且数量较少，因此删除这些行
 df=df.dropna(subset=['LoanAmount'])
 print(df.Credit_History.value_counts())#信用达标对结果影响较大，但是缺失数据较多，因此填写unknown
 df.Credit_History=df.Credit_History.fillna('Unknown')
@@ -18,3 +21,20 @@ print(pd.pivot_table(df, values='Loan_Status', index='Gender', columns='Married'
 def collectiveincome(row):
     return row['ApplicantIncome']+row['CoapplicantIncome']
 df['Collectiveincome']=df.apply(collectiveincome,axis=1)
+bars=df.groupby('Education').Loan_Status.mean()
+plt.bar(bars.index,bars.values)
+plt.title('学历与通过率关系')
+plt.xlabel('学历')
+plt.ylabel('通过率')
+plt.show()
+plt.hist(df['Collectiveincome'],bins=100,edgecolor='white')
+plt.title('共同收入分布')
+plt.xlabel('收入')
+plt.ylabel('人数')
+plt.show()
+series=df.groupby('Loan_Amount_Term')['Loan_Status'].mean()
+plt.scatter(series.index,series.values)
+plt.title('贷款期限与通过率关系')
+plt.xlabel('贷款期限/月')
+plt.ylabel('通过率')
+plt.show()
